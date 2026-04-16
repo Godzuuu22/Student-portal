@@ -154,6 +154,7 @@
             try {
                 const stats = await fetchAPI('/admin/stats');
                 contentArea.innerHTML = `
+                    <div id="main-alert" class="alert"></div>
                     <div class="bento-grid" style="margin-bottom:32px;">
                         <div class="bento-item bento-span-4 premium-card stat-card-premium accent-blue animate-item-1">
                             <i class="ph-bold ph-users-three stat-icon-bg" style="color:var(--primary)"></i>
@@ -264,7 +265,8 @@
             startLoad();
             try {
                 const subjects = await fetchAPI('/admin/subjects');
-                let html = `
+                let html = `<div id="main-alert" class="alert"></div>`;
+                html += `
                     <div class="modern-header-banner animate-fade-up" style="height:120px; margin-bottom:32px;">
                         <div style="position:absolute; bottom:20px; left:32px;">
                             <h2 style="color:white; font-family:'Outfit',sans-serif; font-size:28px;">Subject Repository</h2>
@@ -274,7 +276,13 @@
                     </div>
                     <div class="identity-grid-v2">
                 `;
-                if (!subjects.length) html += `<div style="padding:64px; text-align:center; color:var(--text-light); grid-column:span 4;"><i class="ph-bold ph-books" style="font-size:48px; margin-bottom:16px;"></i><br>No subjects found.</div>`;
+                if (!subjects.length) html += `
+                    <div style="padding:100px 64px; text-align:center; color:var(--text-light); grid-column:span 4; background:rgba(255,255,255,0.4); border-radius:24px; border:1px dashed var(--primary-light);">
+                        <i class="ph-bold ph-books" style="font-size:64px; margin-bottom:24px; opacity:0.3;"></i>
+                        <h3 style="color:var(--primary); margin-bottom:12px;">No subjects found</h3>
+                        <p style="margin-bottom:32px;">Start by adding your first institutional subject to the repository.</p>
+                        <button class="btn btn-primary" onclick="showSubjectModal()" style="padding:16px 32px; font-size:16px;"><i class="ph-bold ph-plus"></i> Create First Subject</button>
+                    </div>`;
                 else subjects.forEach((sub, index) => { 
                     html += `
                         <div class="identity-card-v2 vivid-amber stagger-${(index % 6) + 1}">
@@ -316,7 +324,7 @@
                     }); 
                     closeModal(); 
                     loadSubjects(); 
-                    showAlert(res.message, 'success', 'welcome-sub'); // Use welcome-sub as a fallback alert container if needed or global showAlert
+                    showAlert(res.message, 'success', 'main-alert'); 
                 } catch(e) { 
                     showAlert(e.message, 'error', 'modal-alert'); 
                 } finally {
@@ -366,10 +374,11 @@
              pageTitle.textContent = 'Enrollment Management';
              welcomeSub.textContent = 'Assign students to specific subjects and semesters';
              startLoad();
-             try {
+              try {
                 const data = await fetchAPI('/admin/enrollments');
                 const colors = ['vivid-violet', 'vivid-amber', 'vivid-emerald', 'vivid-rose', 'vivid-azure'];
-                let html = `
+                let html = `<div id="main-alert" class="alert"></div>`;
+                html += `
                     <div class="modern-header-banner animate-fade-up" style="height:120px; background:linear-gradient(135deg, #10b981, #059669); margin-bottom:32px;">
                         <div style="position:absolute; bottom:20px; left:32px;">
                             <h2 style="color:white; font-family:'Outfit',sans-serif; font-size:28px;">Institutional Enrollments</h2>
@@ -379,7 +388,13 @@
                     </div>
                     <div class="identity-grid-v2">
                 `;
-                if(!data.length) html += `<div style="padding:64px; text-align:center; color:var(--text-light); grid-column:span 4;"><i class="ph-bold ph-calendar-plus" style="font-size:48px; margin-bottom:16px;"></i><br>No enrollments found.</div>`;
+                if(!data.length) html += `
+                    <div style="padding:100px 64px; text-align:center; color:var(--text-light); grid-column:span 4; background:rgba(255,255,255,0.4); border-radius:24px; border:1px dashed var(--primary-light);">
+                        <i class="ph-bold ph-calendar-plus" style="font-size:64px; margin-bottom:24px; opacity:0.3;"></i>
+                        <h3 style="color:var(--primary); margin-bottom:12px;">No active enrollments</h3>
+                        <p style="margin-bottom:32px;">Assign students to subjects to manage their academic progress.</p>
+                        <button class="btn btn-primary" onclick="showEnrollmentModal()" style="padding:16px 32px; font-size:16px; background:var(--success)"><i class="ph-bold ph-user-plus"></i> New Enrollment</button>
+                    </div>`;
                 else data.forEach((row, index) => { 
                     const vividClass = colors[index % colors.length];
                     html += `
@@ -423,6 +438,7 @@
                         }); 
                         closeModal(); 
                         loadEnrollments(); 
+                        showAlert(res.message, 'success', 'main-alert');
                     } catch(e) {
                         showAlert(e.message, 'error', 'modal-alert');
                     } finally {
@@ -442,7 +458,8 @@
             startLoad();
             try {
                 const data = await fetchAPI('/admin/grades');
-                let html = `
+                let html = `<div id="main-alert" class="alert"></div>`;
+                html += `
                     <div class="modern-header-banner animate-fade-up" style="height:120px; background:linear-gradient(135deg, #f43f5e, #be123c); margin-bottom:32px;">
                         <div style="position:absolute; bottom:20px; left:32px;">
                             <h2 style="color:white; font-family:'Outfit',sans-serif; font-size:28px;">Grade Repository</h2>
@@ -452,7 +469,13 @@
                     </div>
                     <div class="grade-list" style="max-width: 900px; margin: 0 auto;">
                 `;
-                if(!data.length) html += `<div style="text-align:center; padding:64px;"><i class="ph-bold ph-chart-bar" style="font-size:48px; color:var(--text-light); opacity:0.1;"></i><br><span style="color:var(--text-light); font-size:15px;">No grade records published.</span></div>`;
+                if(!data.length) html += `
+                    <div style="padding:100px 64px; text-align:center; color:var(--text-light); background:rgba(255,255,255,0.4); border-radius:24px; border:1px dashed var(--danger);">
+                        <i class="ph-bold ph-chart-bar" style="font-size:64px; margin-bottom:24px; opacity:0.3;"></i>
+                        <h3 style="color:var(--primary); margin-bottom:12px;">No grade records</h3>
+                        <p style="margin-bottom:32px;">Publish official academic performance records for enrolled students.</p>
+                        <button class="btn btn-primary" onclick="showGradeModal()" style="padding:16px 32px; font-size:16px; background:var(--danger)"><i class="ph-bold ph-pencil-simple"></i> Encode First Grade</button>
+                    </div>`;
                 else data.forEach((row, index) => { 
                     const g = parseFloat(row.grade);
                     let orbColor = '#10b981'; // Success
@@ -497,6 +520,7 @@
                         }); 
                         closeModal(); 
                         loadGrades(); 
+                        showAlert(res.message, 'success', 'main-alert');
                     } catch(e) {
                         showAlert(e.message, 'error', 'modal-alert');
                     } finally {
