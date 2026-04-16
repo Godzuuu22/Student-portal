@@ -1,7 +1,3 @@
--- Create database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS student_portal;
-USE student_portal;
-
 -- Users table (Authentication and Roles)
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
