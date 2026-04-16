@@ -294,9 +294,35 @@
         }
 
         function showSubjectModal() {
-            const body = `<div class="form-group"><label>Subject Code</label><input type="text" id="sub-code" class="form-control" placeholder="CS101"></div><div class="form-group"><label>Subject Name</label><input type="text" id="sub-name" class="form-control" placeholder="Computer Science Fundamentals"></div><div class="form-group"><label>Description</label><textarea id="sub-desc" class="form-control" rows="3"></textarea></div>`;
+            const body = `
+                <div class="form-group"><label>Subject Code</label><input type="text" id="sub-code" class="form-control" placeholder="CS101"></div>
+                <div class="form-group"><label>Subject Name</label><input type="text" id="sub-name" class="form-control" placeholder="Computer Science Fundamentals"></div>
+                <div class="form-group"><label>Instructor</label><input type="text" id="sub-instructor" class="form-control" placeholder="Dr. Smith"></div>
+                <div class="form-group"><label>Description</label><textarea id="sub-desc" class="form-control" rows="3"></textarea></div>
+            `;
             openModal('Add New Subject', body, async () => {
-                try { await fetchAPI('/admin/subjects', { method: 'POST', body: JSON.stringify({ code: document.getElementById('sub-code').value, name: document.getElementById('sub-name').value, description: document.getElementById('sub-desc').value }) }); closeModal(); loadSubjects(); } catch(e) { showAlert(e.message, 'error', 'modal-alert'); }
+                const submitBtn = document.getElementById('modal-submit');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Adding...';
+                try { 
+                    const res = await fetchAPI('/admin/subjects', { 
+                        method: 'POST', 
+                        body: JSON.stringify({ 
+                            code: document.getElementById('sub-code').value, 
+                            name: document.getElementById('sub-name').value, 
+                            instructor: document.getElementById('sub-instructor').value,
+                            description: document.getElementById('sub-desc').value 
+                        }) 
+                    }); 
+                    closeModal(); 
+                    loadSubjects(); 
+                    showAlert(res.message, 'success', 'welcome-sub'); // Use welcome-sub as a fallback alert container if needed or global showAlert
+                } catch(e) { 
+                    showAlert(e.message, 'error', 'modal-alert'); 
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Save Changes';
+                }
             });
         }
         async function deleteSubject(id) { if(confirm("Delete this subject?")) { await fetchAPI(`/admin/subjects/${id}`, { method: 'DELETE' }); loadSubjects(); } }
@@ -376,11 +402,37 @@
         async function showEnrollmentModal() {
             try {
                 const [students, subjects] = await Promise.all([fetchAPI('/admin/students'), fetchAPI('/admin/subjects')]);
+                if (!students.length) return alert("No students available to enroll.");
+                if (!subjects.length) return alert("No subjects available.");
+                
                 let sOptions = students.map(s => `<option value="${s.id}">${s.first_name} ${s.last_name}</option>`).join('');
                 let subOptions = subjects.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
                 const body = `<div class="form-group"><label>Student</label><select id="enr-student" class="form-control">${sOptions}</select></div><div class="form-group"><label>Subject</label><select id="enr-subject" class="form-control">${subOptions}</select></div><div class="form-group"><label>Semester</label><input type="text" id="enr-sem" class="form-control" placeholder="2nd Semester 2026"></div>`;
-                openModal('Assign Schedule', body, async () => { await fetchAPI('/admin/enrollments', { method: 'POST', body: JSON.stringify({ student_id: document.getElementById('enr-student').value, subject_id: document.getElementById('enr-subject').value, semester: document.getElementById('enr-sem').value }) }); closeModal(); loadEnrollments(); });
-            } catch(e) { console.error(e); }
+                
+                openModal('Assign Schedule', body, async () => { 
+                    const submitBtn = document.getElementById('modal-submit');
+                    submitBtn.disabled = true;
+                    try {
+                        const res = await fetchAPI('/admin/enrollments', { 
+                            method: 'POST', 
+                            body: JSON.stringify({ 
+                                student_id: document.getElementById('enr-student').value, 
+                                subject_id: document.getElementById('enr-subject').value, 
+                                semester: document.getElementById('enr-sem').value 
+                            }) 
+                        }); 
+                        closeModal(); 
+                        loadEnrollments(); 
+                    } catch(e) {
+                        showAlert(e.message, 'error', 'modal-alert');
+                    } finally {
+                        submitBtn.disabled = false;
+                    }
+                });
+            } catch(e) { 
+                console.error(e);
+                alert("Failed to load enrollment data. " + e.message);
+            }
         }
         async function deleteEnrollment(id) { if(confirm("Remove enrollment?")) { await fetchAPI(`/admin/enrollments/${id}`, { method: 'DELETE' }); loadEnrollments(); } }
 
@@ -426,10 +478,35 @@
         async function showGradeModal() {
             try {
                 const enrollments = await fetchAPI('/admin/enrollments');
+                if (!enrollments.length) return alert("No active enrollments found to grade.");
+
                 let eOptions = enrollments.map(e => `<option value="${e.id}">${e.first_name} ${e.last_name} — ${e.subject_name}</option>`).join('');
                 const body = `<div class="form-group"><label>Select Enrollment</label><select id="grade-enrollment" class="form-control">${eOptions}</select></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;"><div class="form-group"><label>Grade</label><input type="text" id="grade-value" class="form-control" placeholder="1.00"></div><div class="form-group"><label>Remarks</label><input type="text" id="grade-remarks" class="form-control" placeholder="Passed"></div></div>`;
-                openModal('Post Final Grade', body, async () => { await fetchAPI('/admin/grades', { method: 'POST', body: JSON.stringify({ enrollment_id: document.getElementById('grade-enrollment').value, grade: document.getElementById('grade-value').value, remarks: document.getElementById('grade-remarks').value }) }); closeModal(); loadGrades(); });
-            } catch(e) { console.error(e); }
+                
+                openModal('Post Final Grade', body, async () => { 
+                    const submitBtn = document.getElementById('modal-submit');
+                    submitBtn.disabled = true;
+                    try {
+                        const res = await fetchAPI('/admin/grades', { 
+                            method: 'POST', 
+                            body: JSON.stringify({ 
+                                enrollment_id: document.getElementById('grade-enrollment').value, 
+                                grade: document.getElementById('grade-value').value, 
+                                remarks: document.getElementById('grade-remarks').value 
+                            }) 
+                        }); 
+                        closeModal(); 
+                        loadGrades(); 
+                    } catch(e) {
+                        showAlert(e.message, 'error', 'modal-alert');
+                    } finally {
+                        submitBtn.disabled = false;
+                    }
+                });
+            } catch(e) { 
+                console.error(e);
+                alert("Failed to load enrollment data. " + e.message);
+            }
         }
         async function deleteGrade(id) { if(confirm("Delete grade record?")) { await fetchAPI(`/admin/grades/${id}`, { method: 'DELETE' }); loadGrades(); } }
 

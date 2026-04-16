@@ -59,11 +59,21 @@ exports.getSubjects = async (req, res) => {
 };
 
 exports.addSubject = async (req, res) => {
-    const { code, name, description } = req.body;
+    const { code, name, description, instructor } = req.body;
+    if (!code || !name) {
+        return res.status(400).json({ error: 'Subject code and name are required' });
+    }
     try {
-        await db.execute('INSERT INTO subjects (code, name, description) VALUES (?, ?, ?)', [code, name, description]);
-        res.json({ message: 'Subject added' });
-    } catch (err) { res.status(500).json({ error: 'Server error' }); }
+        await db.execute('INSERT INTO subjects (code, name, description, instructor) VALUES (?, ?, ?, ?)', 
+            [code, name, description || '', instructor || '']);
+        res.json({ message: 'Subject added successfully' });
+    } catch (err) {
+        console.error('Add Subject Error:', err);
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ error: 'Subject code already exists' });
+        }
+        res.status(500).json({ error: 'Server error: ' + err.message });
+    }
 };
 
 exports.updateSubject = async (req, res) => {
@@ -97,10 +107,19 @@ exports.getEnrollments = async (req, res) => {
 
 exports.addEnrollment = async (req, res) => {
     const { student_id, subject_id, semester } = req.body;
+    if (!student_id || !subject_id || !semester) {
+        return res.status(400).json({ error: 'Student, subject, and semester are required' });
+    }
     try {
         await db.execute('INSERT INTO enrollments (student_id, subject_id, semester) VALUES (?, ?, ?)', [student_id, subject_id, semester]);
-        res.json({ message: 'Enrollment created' });
-    } catch (err) { res.status(500).json({ error: 'Server error' }); }
+        res.json({ message: 'Enrollment created successfully' });
+    } catch (err) {
+        console.error('Add Enrollment Error:', err);
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ error: 'Student is already enrolled in this subject' });
+        }
+        res.status(500).json({ error: 'Server error: ' + err.message });
+    }
 };
 
 exports.deleteEnrollment = async (req, res) => {
@@ -127,10 +146,16 @@ exports.getGrades = async (req, res) => {
 
 exports.addGrade = async (req, res) => {
     const { enrollment_id, grade, remarks } = req.body;
+    if (!enrollment_id || !grade) {
+        return res.status(400).json({ error: 'Enrollment and grade are required' });
+    }
     try {
-        await db.execute('INSERT INTO grades (enrollment_id, grade, remarks) VALUES (?, ?, ?)', [enrollment_id, grade, remarks]);
-        res.json({ message: 'Grade added' });
-    } catch (err) { res.status(500).json({ error: 'Server error' }); }
+        await db.execute('INSERT INTO grades (enrollment_id, grade, remarks) VALUES (?, ?, ?)', [enrollment_id, grade, remarks || '']);
+        res.json({ message: 'Grade added successfully' });
+    } catch (err) {
+        console.error('Add Grade Error:', err);
+        res.status(500).json({ error: 'Server error: ' + err.message });
+    }
 };
 
 exports.updateGrade = async (req, res) => {
