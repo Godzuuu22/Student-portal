@@ -1637,3 +1637,67 @@ body {
 .stagger-4 { animation-delay: 0.4s; }
 .stagger-5 { animation-delay: 0.5s; }
 .stagger-6 { animation-delay: 0.6s; }
+
+/* ── MOBILE ADAPTIVITY (iOS/Android) ── */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .profile-header-clean {
+        padding: 20px !important;
+        border-radius: 20px !important;
+    }
+
+    .profile-header-clean > div {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px;
+    }
+
+    .modern-profile-avatar {
+        width: 100px !important;
+        height: 100px !important;
+        border-radius: 24px !important;
+    }
+
+    .identity-grid-v2 {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+
+    .identity-card-v2 {
+        padding: 16px !important;
+    }
+
+    .identity-info-v2 .value {
+        font-size: 15px !important;
+    }
+
+    .course-card-v2 {
+        padding: 20px !important;
+    }
+
+    .course-title-v2 {
+        font-size: 18px !important;
+    }
+
+    .grade-header-v2 {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .gpa-display-v2 {
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+
+    /* Auth Card (Sign In) */
+    .auth-card {
+        padding: 32px 24px !important;
+    }
+
+    .hero-headline {
+        font-size: 32px !important;
+    }
+}

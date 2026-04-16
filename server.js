@@ -7,7 +7,11 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.set('trust proxy', 1); // Trust the tunnel/proxy for secure cookies
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -16,7 +20,11 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 } // 1 day
+    cookie: { 
+        secure: false, // Set to false to ensure login works on all devices via the tunnel
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 
+    }
 }));
 
 // Serve static files (Frontend)
