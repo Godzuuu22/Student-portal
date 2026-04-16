@@ -623,10 +623,19 @@
         const mobileToggle = document.getElementById('mobile-toggle');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('sidebar-overlay');
+        const menuIcon = mobileToggle ? mobileToggle.querySelector('i') : null;
 
         function toggleSidebar() {
             sidebar.classList.toggle('mobile-active');
             overlay.classList.toggle('active');
+            
+            if (sidebar.classList.contains('mobile-active')) {
+                menuIcon.classList.replace('ph-list', 'ph-x');
+                document.body.style.overflow = 'hidden';
+            } else {
+                menuIcon.classList.replace('ph-x', 'ph-list');
+                document.body.style.overflow = '';
+            }
         }
 
         if (mobileToggle) {
