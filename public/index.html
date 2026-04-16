@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHCC Portal — Sign In</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+      .role-selector {
+        display: flex;
+        background: rgba(0, 0, 0, 0.05);
+        padding: 4px;
+        border-radius: var(--radius-md);
+        margin-bottom: 32px;
+      }
+      .role-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .role-btn.active {
+        background: var(--white);
+        color: var(--primary);
+        box-shadow: var(--shadow-sm);
+      }
+      .brand-accent {
+        color: var(--primary);
+        font-weight: 800;
+      }
+      .brand-accent span {
+        color: var(--accent);
+      }
+      
+      /* Landing Page Navbar */
+      .landing-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 24px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 50;
+      }
+      
+      .landing-nav .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--white);
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      }
+      
+      .landing-nav .nav-links {
+        display: flex;
+        gap: 32px;
+      }
+      
+      .landing-nav .nav-links a {
+        color: rgba(255,255,255,0.9);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        transition: color 0.2s;
+      }
+      
+      .landing-nav .nav-links a:hover {
+        color: var(--accent);
+      }
+      
+      html { scroll-behavior: smooth; }
+      
+      /* Hero Section */
+      .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 120px 20px 60px 20px;
+        position: relative;
+        background: url('images/anniversary-bg.jpg') no-repeat center center;
+        background-color: #0A2540;
+        background-size: cover;
+        background-attachment: fixed;
+        overflow: hidden; /* Prevent glowing orbs from bleeding into below sections */
+      }
+      
+      .hero-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(10,37,64,0.85) 0%, rgba(45,108,192,0.6) 100%);
+        backdrop-filter: blur(2px);
+      }
+
+      /* Sections below Hero */
+      .landing-section {
+        padding: 100px 48px;
+        background: var(--white);
+        color: var(--text-main);
+      }
+      
+      .landing-section.dark {
+        background: #0A2540;
+        color: var(--white);
+      }
+      
+      .section-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 36px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 60px;
+        color: inherit;
+      }
+      
+      .section-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      .info-card {
+        padding: 40px;
+        background: rgba(0,0,0,0.03);
+        border-radius: 24px;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+      }
+      
+      .dark .info-card {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+      }
+      
+      .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        border-color: var(--primary-light);
+      }
+      
+      /* Scroll Animations */
+      .fade-up {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      }
+      
+      .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      /* Campus Gallery */
+      .campus-gallery {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: 250px 250px;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto 60px auto;
+      }
+      
+      .gallery-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 24px;
+        transition: transform 0.4s ease;
+        box-shadow: var(--shadow-md);
+      }
+      
+      .gallery-item:hover .gallery-img {
+        transform: scale(1.03);
+      }
+      
+      .gallery-item {
+        overflow: hidden;
+        border-radius: 24px;
+        position: relative;
+      }
+      
+      .gallery-item.large {
+        grid-row: span 2;
+      }
+      
+      .gallery-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 40px 24px 24px 24px;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        color: white;
+        font-family: 'Outfit';
+        font-weight: 700;
+        font-size: 20px;
+        z-index: 2;
+      }
+      
+      @media(max-width: 900px) {
+        .campus-gallery {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+        }
+        .gallery-item { height: 250px; }
+      }
+      
+      /* Glowing Ambient Orbs */
+      .ambient-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.5;
+        z-index: 1;
+        animation: floatOrb 10s infinite ease-in-out alternate;
+        pointer-events: none;
+      }
+      
+      .orb-1 {
+        width: 400px;
+        height: 400px;
+        background: var(--light-blue);
+        top: -100px;
+        left: -100px;
+        background: #2D6CC0;
+      }
+      
+      .orb-2 {
+        width: 500px;
+        height: 500px;
+        background: var(--accent);
+        bottom: -150px;
+        right: 10%;
+        animation-delay: -5s;
+        animation-duration: 15s;
+      }
+      
+      @keyframes floatOrb {
+        0% { transform: translateY(0) scale(1); }
+        100% { transform: translateY(40px) scale(1.1); }
+      }
+      
+      /* Typing Animation Text */
+      .typing-wrapper {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 4px solid var(--accent);
+        animation: typing 4s steps(30, end) infinite, blink .75s step-end infinite;
+        width: 0;
+        vertical-align: bottom;
+      }
+      
+      @keyframes typing {
+        0%, 10% { width: 0; }
+        40%, 60% { width: 100%; }
+        90%, 100% { width: 0; }
+      }
+      
+      @keyframes blink {
+        from, to { border-color: transparent }
+        50% { border-color: var(--accent); }
+      }
+      
+      /* Floating Badge */
+      .floating-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        margin-bottom: 24px;
+        color: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      
+      .split-hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 60px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        z-index: 10;
+      }
+      
+      .hero-text {
+        flex: 1;
+        color: white;
+      }
+      
+      .hero-headline {
+        font-family: 'Outfit', sans-serif;
+        font-size: 64px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 24px;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+      
+      .hero-subheadline {
+        font-size: 20px;
+        color: rgba(255,255,255,0.85);
+        line-height: 1.6;
+        max-width: 500px;
+      }
+      
+      @media(max-width: 900px) {
+        .split-hero { flex-direction: column; text-align: center; }
+        .hero-subheadline { margin: 0 auto; }
+        .hero-headline { font-size: 48px; }
+      }
+    </style>
+</head>
+<body>
+<body>
+    <!-- Top Navbar -->
+    <nav class="landing-nav" style="position:fixed; background:rgba(10,37,64,0.9); backdrop-filter:blur(20px);">
+        <div class="logo" style="display:flex; align-items:center; gap:12px;">
+            <img src="images/logo.jpg" alt="CHCC Logo" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+            <span style="font-family:'Outfit'; font-weight:800; font-size:24px;">CHCC Portal</span>
+        </div>
+        <div class="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#about">About Us</a>
+            <a href="#programs">Programs</a>
+            <a href="#admissions">Admissions</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <div id="hero" class="hero-section">
+        <!-- Ambient Glowing Orbs -->
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+        
+        <div class="split-hero">
+            <div class="hero-text fade-up" style="position:relative; z-index:10;">
+                <div class="floating-badge" style="background:linear-gradient(135deg, var(--accent), #F6D657); color:#000; font-family:'Outfit', sans-serif; font-size:14px; font-weight:800; padding:10px 20px; box-shadow:0 8px 32px rgba(226, 183, 20, 0.4); border:none;">
+                    <i class="ph-fill ph-calendar-check" style="font-size:18px;"></i>
+                    Grand 3-Day Celebration &nbsp;•&nbsp; Sept 11, 12 & 15, 2025 at CHCCI Covered Court
+                </div>
+                <h1 class="hero-headline" style="font-size:56px;">30th Celebration of<br>
+                    <span style="color:var(--accent); font-family: 'Outfit', sans-serif;">Founding Anniversary</span>
+                </h1>
+                <p class="hero-subheadline" style="font-size:18px; font-weight:500; font-style:italic; border-left:4px solid var(--accent); padding-left:16px;">
+                    "Thirty Years of Excellence: Honoring the Past, Inspiring the Future"
+                </p>
+                <div style="margin-top:32px; font-size:15px; color:white; display:flex; flex-wrap:wrap; gap:16px; align-items:center;">
+                    <span style="padding:8px 20px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); border-radius:30px; font-weight:600; font-family:'Outfit', sans-serif; letter-spacing:0.5px; display:flex; align-items:center; gap:8px; backdrop-filter:blur(10px);">
+                        <i class="ph-fill ph-crown" style="color:var(--accent); font-size:18px;"></i> Dress Code: Formal or Filipiniana
+                    </span>
+                    <span style="font-style:italic; color:rgba(255,255,255,0.7); font-weight:500;">You are cordially invited to celebrate with us.</span>
+                </div>
+            </div>
+            <div class="auth-card fade-up premium-card accent-blue" style="margin: 0; width:100%; max-width:440px; padding: 48px; border-radius: 32px; backdrop-filter: blur(40px) saturate(200%);">
+                <div class="login-logo" style="text-align: center; margin-bottom: 40px;">
+                    <div class="logo-orb" style="width: 64px; height: 64px; background: rgba(45, 108, 192, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; color: var(--primary-light);">
+                        <i class="ph-bold ph-student"></i>
+                    </div>
+                    <div class="brand-accent" style="font-size: 36px; font-family: 'Outfit', sans-serif; margin-bottom: 8px;">CHCC<span>Portal</span></div>
+                    <div class="tagline" style="color: var(--text-light); font-weight: 500;">Secure Academic Gateway</div>
+                </div>
+                
+                <div id="form-alert" class="alert"></div>
+
+                <div class="role-selector" style="margin-bottom: 32px; background: rgba(0,0,0,0.03); padding: 6px; border-radius: 14px;">
+                    <button class="role-btn active" onclick="setRole('student', event)" type="button" style="padding: 12px; border-radius: 10px; font-weight: 700;">
+                        <i class="ph-bold ph-graduation-cap"></i> Student
+                    </button>
+                    <button class="role-btn" onclick="setRole('admin', event)" type="button" style="padding: 12px; border-radius: 10px; font-weight: 700;">
+                        <i class="ph-bold ph-shield-check"></i> Admin
+                    </button>
+                </div>
+
+                <form id="login-form">
+                    <input type="hidden" id="loginType" value="student">
+                    
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label id="user-label" style="font-weight: 700; color: var(--primary); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Portal ID / Username</label>
+                        <div class="input-wrapper" style="position: relative;">
+                            <i class="ph-bold ph-user-circle" id="user-icon" style="position: absolute; left: 16px; top: 14px; font-size: 20px; color: var(--primary-light);"></i>
+                            <input type="text" id="username" class="form-control" required placeholder="e.g. STU-2024-0042" style="padding-left: 48px; height: 50px; font-weight: 500;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 32px;">
+                        <label style="font-weight: 700; color: var(--primary); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">Authorization Password</label>
+                        <div class="input-wrapper" style="position: relative;">
+                            <i class="ph-bold ph-fingerprint" style="position: absolute; left: 16px; top: 14px; font-size: 20px; color: var(--primary-light);"></i>
+                            <input type="password" id="password" class="form-control" required placeholder="••••••••" style="padding-left: 48px; height: 50px; font-weight: 500;">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block" style="padding:16px; font-size:16px; font-weight:800; border-radius: 14px; box-shadow: 0 10px 25px rgba(10, 37, 64, 0.2);">
+                        Sign In Now <i class="ph-bold ph-arrow-right"></i>
+                    </button>
+                </form>
+                
+                <div class="text-center mt-4" style="font-size: 0.9rem; text-align: center; margin-top: 32px;">
+                    <p style="color: var(--text-muted); font-weight: 500;">New to the portal? <a href="register.html" style="color: var(--primary); text-decoration: none; font-weight:800; border-bottom: 2px solid rgba(10, 37, 64, 0.1);">Register Enrollment</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="landing-section" style="background: url('images/bg.png') center/cover fixed; position: relative; padding-top: 100px;">
+        <!-- Much more transparent overlay to show the building clearly -->
+        <div style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(2px); z-index: 0;"></div>
+        
+        <div style="position: relative; z-index: 1;">
+            <div class="section-title fade-up" style="color: var(--primary);">About Our Institution</div>
+        
+        <div class="campus-gallery fade-up">
+            <div class="gallery-item large">
+                <img src="images/students.jpg" class="gallery-img" alt="Students">
+                <div class="gallery-caption">Vibrant Campus Life</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/crim.jpg" class="gallery-img" alt="Criminology">
+                <div class="gallery-caption" style="font-size:16px;">Criminology Department</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/fun_Run.jpg" class="gallery-img" alt="Fun Run">
+                <div class="gallery-caption" style="font-size:16px;">Community Fun Run</div>
+            </div>
+            <div class="gallery-item" style="grid-column: span 2;">
+                <img src="images/nursing.jpg" class="gallery-img" alt="Nursing">
+                <div class="gallery-caption">College of Nursing & Allied Health</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card fade-up" style="background:#ffffff; border:1px solid rgba(0,0,0,0.05); box-shadow:0 10px 40px rgba(0,0,0,0.03);">
+                <i class="ph-fill ph-books" style="font-size:48px; color:var(--primary); margin-bottom:16px;"></i>
+                <h3 style="font-family:'Outfit'; font-size:24px; margin-bottom:12px; color:var(--primary);">Academic Excellence</h3>
+                <p style="color:var(--text-muted); line-height:1.6;">Concepcion Holy Cross College is dedicated to providing world-class education, fostering critical thinking, and nurturing future leaders across various disciplines.</p>
+            </div>
+            <div class="info-card" style="background:#ffffff; border:1px solid rgba(0,0,0,0.05); box-shadow:0 10px 40px rgba(0,0,0,0.03);">
+                <i class="ph-fill ph-users-three" style="font-size:48px; color:var(--primary); margin-bottom:16px;"></i>
+                <h3 style="font-family:'Outfit'; font-size:24px; margin-bottom:12px; color:var(--primary);">Vibrant Community</h3>
+                <p style="color:var(--text-muted); line-height:1.6;">Experience a diverse and inclusive campus life. Our student organizations, athletics, and events create a thriving environment for personal growth.</p>
+            </div>
+            <div class="info-card" style="background:#ffffff; border:1px solid rgba(0,0,0,0.05); box-shadow:0 10px 40px rgba(0,0,0,0.03);">
+                <i class="ph-fill ph-buildings" style="font-size:48px; color:var(--primary); margin-bottom:16px;"></i>
+                <h3 style="font-family:'Outfit'; font-size:24px; margin-bottom:12px; color:var(--primary);">Modern Facilities</h3>
+                <p style="color:var(--text-muted); line-height:1.6;">Learn in state-of-the-art laboratories, expansive libraries, and smart classrooms designed to optimize your educational experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section id="programs" class="landing-section" style="background: url('images/bg.png') center/cover fixed; padding-top: 100px; border-top: 1px solid rgba(0,0,0,0.05); position: relative;">
+        <!-- Much more transparent overlay to show the building clearly -->
+        <div style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(2px); z-index: 0;"></div>
+        
+        <!-- Subtle branding separator line at the very top -->
+        <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:4px; background:var(--accent); border-radius: 0 0 8px 8px; z-index:1;"></div>
+
+        <div style="position:relative; z-index:1;">
+            <div class="section-title fade-up" style="color:var(--primary);">Explore Our Programs</div>
+        <div class="fade-up" style="display:flex; justify-content:center; margin:-30px auto 60px auto;">
+            <p style="text-align:center; color:#0f172a; font-weight:600; max-width:800px; font-size:16px; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); padding:12px 32px; border-radius:100px; border:1px solid rgba(255,255,255,1); box-shadow:0 10px 30px rgba(0,0,0,0.05);">Discover your passion and shape your future with our comprehensive, industry-aligned academic programs crafted for excellence.</p>
+        </div>
+        
+        <div class="section-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px;">
+            <!-- Computer Science -->
+            <div class="info-card fade-up" style="padding:0; overflow:hidden; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:linear-gradient(135deg, #4b5563, #6b7280); box-shadow:0 15px 40px rgba(107, 114, 128, 0.2); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="height:180px; background:rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                    <!-- Abstract Overlay -->
+                    <div style="position:absolute; width:150px; height:150px; background:#ffffff; opacity:0.1; border-radius:50%; top:-40px; right:-40px; filter:blur(15px);"></div>
+                    <div style="position:absolute; width:100px; height:100px; background:#ffffff; opacity:0.04; border-radius:50%; bottom:-20px; left:-20px; filter:blur(10px);"></div>
+                    <img src="images/cs-logo.jpg" alt="Computer Science Logo" style="width:110px; height:110px; border-radius:50%; border:3px solid white; box-shadow:0 8px 24px rgba(0,0,0,0.3); z-index:2; transition:transform 0.3s; object-fit:cover; background:white;">
+                </div>
+                <div style="padding:32px;">
+                    <h3 style="font-family:'Outfit'; font-size:22px; color:#ffffff; margin-bottom:12px;">Computer Science</h3>
+                    <p style="color:rgba(255,255,255,0.85); font-size:15px; line-height:1.6; margin-bottom:24px;">Master the digital frontier with our BS Computer Science program focused on software engineering and systems.</p>
+                    <a href="https://www.facebook.com/CHCCIComputerStudiesStudentCouncil" target="_blank" rel="noopener noreferrer" style="color:#f6d657; font-weight:800; text-decoration:none; font-size:15px; display:inline-flex; align-items:center; gap:8px;">Visit Facebook Page <i class="ph-bold ph-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <!-- Education -->
+            <div class="info-card fade-up" style="padding:0; overflow:hidden; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:linear-gradient(135deg, #1e3a8a, #3b82f6); box-shadow:0 15px 40px rgba(59, 130, 246, 0.2); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="height:180px; background:rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                    <div style="position:absolute; width:150px; height:150px; background:#ffffff; opacity:0.1; border-radius:50%; top:-40px; right:-40px; filter:blur(15px);"></div>
+                    <div style="position:absolute; width:100px; height:100px; background:#ffffff; opacity:0.04; border-radius:50%; bottom:-20px; left:-20px; filter:blur(10px);"></div>
+                    <img src="images/educ-logo.jpg" alt="Education Logo" style="width:110px; height:110px; border-radius:50%; border:3px solid white; box-shadow:0 8px 24px rgba(0,0,0,0.3); z-index:2; transition:transform 0.3s; object-fit:cover; background:white;">
+                </div>
+                <div style="padding:32px;">
+                    <h3 style="font-family:'Outfit'; font-size:22px; color:#ffffff; margin-bottom:12px;">Teacher Education</h3>
+                    <p style="color:rgba(255,255,255,0.85); font-size:15px; line-height:1.6; margin-bottom:24px;">Shape the minds of tomorrow through our hands-on Bachelor of Education learning programs.</p>
+                    <a href="https://www.facebook.com/CHCCTeacherEducationStudentCouncil" target="_blank" rel="noopener noreferrer" style="color:#f6d657; font-weight:800; text-decoration:none; font-size:15px; display:inline-flex; align-items:center; gap:8px;">Visit Facebook Page <i class="ph-bold ph-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- BSA -->
+            <div class="info-card fade-up" style="padding:0; overflow:hidden; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:linear-gradient(135deg, #15803d, #22c55e); box-shadow:0 15px 40px rgba(34, 197, 94, 0.2); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="height:180px; background:rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                    <div style="position:absolute; width:150px; height:150px; background:#ffffff; opacity:0.1; border-radius:50%; top:-40px; right:-40px; filter:blur(15px);"></div>
+                    <div style="position:absolute; width:100px; height:100px; background:#ffffff; opacity:0.04; border-radius:50%; bottom:-20px; left:-20px; filter:blur(10px);"></div>
+                    <img src="images/bsa-lgo.jpg" alt="BSA Logo" style="width:110px; height:110px; border-radius:50%; border:3px solid white; box-shadow:0 8px 24px rgba(0,0,0,0.3); z-index:2; transition:transform 0.3s; object-fit:cover; background:white;">
+                </div>
+                <div style="padding:32px;">
+                    <h3 style="font-family:'Outfit'; font-size:22px; color:#ffffff; margin-bottom:12px;">Accountancy (BSA)</h3>
+                    <p style="color:rgba(255,255,255,0.85); font-size:15px; line-height:1.6; margin-bottom:24px;">Develop high-level leadership and financial expertise with our dynamic Accountancy degrees.</p>
+                    <a href="https://www.facebook.com/ChccCbaaCollegeStudentCouncil" target="_blank" rel="noopener noreferrer" style="color:#ffffff; font-weight:800; text-decoration:none; font-size:15px; display:inline-flex; align-items:center; gap:8px;">Visit Facebook Page <i class="ph-bold ph-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Criminology -->
+            <div class="info-card fade-up" style="padding:0; overflow:hidden; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:linear-gradient(135deg, #7f1d1d, #b91c1c); box-shadow:0 15px 40px rgba(153, 27, 27, 0.2); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="height:180px; background:rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                    <div style="position:absolute; width:150px; height:150px; background:#ffffff; opacity:0.1; border-radius:50%; top:-40px; right:-40px; filter:blur(15px);"></div>
+                    <div style="position:absolute; width:100px; height:100px; background:#ffffff; opacity:0.04; border-radius:50%; bottom:-20px; left:-20px; filter:blur(10px);"></div>
+                    <img src="images/crim-logo.jpg" alt="Criminology Logo" style="width:110px; height:110px; border-radius:50%; border:3px solid white; box-shadow:0 8px 24px rgba(0,0,0,0.3); z-index:2; transition:transform 0.3s; object-fit:cover; background:white;">
+                </div>
+                <div style="padding:32px;">
+                    <h3 style="font-family:'Outfit'; font-size:22px; color:#ffffff; margin-bottom:12px;">Criminology</h3>
+                    <p style="color:rgba(255,255,255,0.85); font-size:15px; line-height:1.6; margin-bottom:24px;">Uphold the law and serve the community with pride through our intensive BS Criminology academic preparation.</p>
+                    <a href="https://www.facebook.com/profile.php?id=61555653179696" target="_blank" rel="noopener noreferrer" style="color:#f6d657; font-weight:800; text-decoration:none; font-size:15px; display:inline-flex; align-items:center; gap:8px;">Visit Facebook Page <i class="ph-bold ph-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <!-- Nursing -->
+            <div class="info-card fade-up" style="padding:0; overflow:hidden; border-radius:24px; border:1px solid rgba(0,0,0,0.05); background:#ffffff; box-shadow:0 10px 40px rgba(0,0,0,0.04); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="height:180px; background:linear-gradient(135deg, rgba(10,37,64,0.04), transparent); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                    <div style="position:absolute; width:150px; height:150px; background:var(--accent); opacity:0.1; border-radius:50%; top:-40px; right:-40px; filter:blur(15px);"></div>
+                    <div style="position:absolute; width:100px; height:100px; background:var(--primary); opacity:0.04; border-radius:50%; bottom:-20px; left:-20px; filter:blur(10px);"></div>
+                    <img src="images/nursing-logo.jpg" alt="Nursing Logo" style="width:110px; height:110px; border-radius:50%; border:3px solid white; box-shadow:0 8px 24px rgba(0,0,0,0.1); z-index:2; transition:transform 0.3s; object-fit:cover; background:white;">
+                </div>
+                <div style="padding:32px;">
+                    <h3 style="font-family:'Outfit'; font-size:22px; color:var(--primary); margin-bottom:12px;">Nursing</h3>
+                    <p style="color:var(--text-muted); font-size:15px; line-height:1.6; margin-bottom:24px;">Provide compassionate, globally competitive healthcare through our comprehensive BS Nursing program.</p>
+                    <a href="https://www.facebook.com/profile.php?id=61578170303917" target="_blank" rel="noopener noreferrer" style="color:#059669; font-weight:800; text-decoration:none; font-size:15px; display:inline-flex; align-items:center; gap:8px;">Visit Facebook Page <i class="ph-bold ph-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <!-- Hospitality Management -->
+            <div class="info-card fade-up" style="padding:0; overflow:hidden; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:linear-gradient(135deg, #dc2626, #ef4444); box-shadow:0 15px 40px rgba(239, 68, 68, 0.2); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="height:180px; background:rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                    <div style="position:absolute; width:150px; height:150px; background:#ffffff; opacity:0.1; border-radius:50%; top:-40px; right:-40px; filter:blur(15px);"></div>
+                    <div style="position:absolute; width:100px; height:100px; background:#ffffff; opacity:0.04; border-radius:50%; bottom:-20px; left:-20px; filter:blur(10px);"></div>
+                    <img src="images/hm-logo.jpg" alt="HM Logo" style="width:110px; height:110px; border-radius:50%; border:3px solid white; box-shadow:0 8px 24px rgba(0,0,0,0.3); z-index:2; transition:transform 0.3s; object-fit:cover; background:white;">
+                </div>
+                <div style="padding:32px;">
+                    <h3 style="font-family:'Outfit'; font-size:22px; color:#ffffff; margin-bottom:12px;">Hospitality Management (HM)</h3>
+                    <p style="color:rgba(255,255,255,0.85); font-size:15px; line-height:1.6; margin-bottom:24px;">Master the art of service and hotel administration with our elite Hospitality Management courses.</p>
+                    <a href="https://www.facebook.com/profile.php?id=100086487848871" target="_blank" rel="noopener noreferrer" style="color:#ffffff; font-weight:800; text-decoration:none; font-size:15px; display:inline-flex; align-items:center; gap:8px;">Visit Facebook Page <i class="ph-bold ph-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <!-- Admissions Section -->
+    <section id="admissions" class="landing-section dark" style="background: url('images/admission_test.jpg') center/cover fixed; position: relative;">
+        <div style="position: absolute; inset: 0; background: rgba(10, 37, 64, 0.85);"></div>
+        <div style="position: relative; z-index: 2;">
+            <div class="section-title">Admissions & Enrollment</div>
+            <div style="max-width:800px; margin:0 auto; text-align:center;">
+                <p style="font-size:18px; line-height:1.8; color:rgba(255,255,255,0.9); margin-bottom:40px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Join our legacy of excellence. We are currently accepting applications for the upcoming academic year. Secure your future with Concepcion Holy Cross College.</p>
+                <div style="display:flex; gap:16px; justify-content:center;">
+                    <button onclick="openModal('applyModal')" class="btn" style="background:var(--accent); color:#000; padding:16px 32px; font-weight:700; border-radius:12px; border:none; cursor:pointer; font-family:'Inter', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">Apply Now</button>
+                    <button onclick="openModal('reqModal')" class="btn" style="background:rgba(255,255,255,0.15); color:var(--white); padding:16px 32px; font-weight:700; border-radius:12px; border:1px solid rgba(255,255,255,0.3); cursor:pointer; font-family:'Inter', sans-serif; backdrop-filter: blur(5px);">Admission Requirements</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="landing-section" style="background: url('images/bg.png') center/cover fixed; position:relative; overflow:hidden;">
+        <!-- Much more transparent overlay to show the building clearly -->
+        <div style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(2px); z-index: 0;"></div>
+
+        <div style="position:relative; z-index:1;">
+            <div class="section-title fade-up" style="color:var(--primary); margin-bottom: 20px;">Get in Touch</div>
+            <div class="fade-up" style="display:flex; justify-content:center; margin:0 auto 60px auto;">
+                <p style="text-align:center; color:#0f172a; font-weight:600; max-width:800px; font-size:16px; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); padding:12px 32px; border-radius:100px; border:1px solid rgba(255,255,255,1); box-shadow:0 10px 30px rgba(0,0,0,0.05);">We're here to help and answer any questions you might have. We look forward to hearing from you.</p>
+            </div>
+        
+        <div class="section-grid fade-up" style="grid-template-columns: 1fr 1fr; gap:64px; position:relative; z-index:2; align-items: start;">
+            <!-- Contact Info -->
+            <div style="display:flex; flex-direction:column; gap:24px;">
+                <div style="padding:32px; background:white; border-radius:24px; box-shadow:var(--shadow-sm); display:flex; gap:20px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-md)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)';">
+                    <div style="width:56px; height:56px; background:rgba(10,37,64,0.05); color:var(--primary); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0;"><i class="ph-fill ph-map-pin"></i></div>
+                    <div>
+                        <h4 style="font-family:'Outfit'; font-size:20px; color:var(--primary); margin-bottom:8px;">Our Campus</h4>
+                        <p style="color:var(--text-muted); line-height:1.6;">Minane, Concepcion<br>Tarlac, Philippines</p>
+                    </div>
+                </div>
+                
+                <div style="padding:32px; background:white; border-radius:24px; box-shadow:var(--shadow-sm); display:flex; gap:20px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-md)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)';">
+                    <div style="width:56px; height:56px; background:rgba(10,37,64,0.05); color:var(--primary); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0;"><i class="ph-fill ph-phone"></i></div>
+                    <div>
+                        <h4 style="font-family:'Outfit'; font-size:20px; color:var(--primary); margin-bottom:8px;">Call Us</h4>
+                        <p style="color:var(--text-muted); line-height:1.6;">Main: +63 45 123 4567<br>Mobile: +63 912 345 6789</p>
+                    </div>
+                </div>
+
+                <div style="padding:32px; background:white; border-radius:24px; box-shadow:var(--shadow-sm); display:flex; gap:20px; transition: transform 0.3s; cursor:pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-md)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)';">
+                    <div style="width:56px; height:56px; background:rgba(10,37,64,0.05); color:var(--primary); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0;"><i class="ph-fill ph-envelope-simple"></i></div>
+                    <div>
+                        <h4 style="font-family:'Outfit'; font-size:20px; color:var(--primary); margin-bottom:8px;">Email Us</h4>
+                        <p style="color:var(--text-muted); line-height:1.6;">admissions@chcc.edu.ph<br>info@chcc.edu.ph</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div style="padding:48px; background:white; border-radius:32px; box-shadow:var(--shadow-lg); border:1px solid rgba(0,0,0,0.05);">
+                <h3 style="font-family:'Outfit'; font-size:28px; color:var(--primary); margin-bottom:32px;">Send a Message</h3>
+                <form onsubmit="event.preventDefault(); alert('Message sent to administration!');">
+                    <div style="margin-bottom:24px;">
+                        <label style="font-size:14px; font-weight:700; color:var(--text-main); display:block; margin-bottom:10px;">Full Name</label>
+                        <input type="text" style="width:100%; padding:16px; background:rgba(0,0,0,0.02); border:2px solid transparent; border-radius:16px; font-size:15px; transition:all 0.3s; outline:none;" onfocus="this.style.background='white'; this.style.borderColor='var(--primary-light)';" onblur="this.style.background='rgba(0,0,0,0.02)'; this.style.borderColor='transparent';" placeholder="Juan Dela Cruz" required>
+                    </div>
+                    <div style="margin-bottom:24px;">
+                        <label style="font-size:14px; font-weight:700; color:var(--text-main); display:block; margin-bottom:10px;">Email Address</label>
+                        <input type="email" style="width:100%; padding:16px; background:rgba(0,0,0,0.02); border:2px solid transparent; border-radius:16px; font-size:15px; transition:all 0.3s; outline:none;" onfocus="this.style.background='white'; this.style.borderColor='var(--primary-light)';" onblur="this.style.background='rgba(0,0,0,0.02)'; this.style.borderColor='transparent';" placeholder="juan@example.com" required>
+                    </div>
+                    <div style="margin-bottom:32px;">
+                        <label style="font-size:14px; font-weight:700; color:var(--text-main); display:block; margin-bottom:10px;">Your Message</label>
+                        <textarea style="width:100%; padding:16px; background:rgba(0,0,0,0.02); border:2px solid transparent; border-radius:16px; font-size:15px; min-height:160px; transition:all 0.3s; outline:none; resize:vertical;" onfocus="this.style.background='white'; this.style.borderColor='var(--primary-light)';" onblur="this.style.background='rgba(0,0,0,0.02)'; this.style.borderColor='transparent';" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; padding:18px; font-size:16px; font-weight:800; border-radius:16px; display:flex; justify-content:center; gap:8px;">
+                        Send Message <i class="ph-bold ph-paper-plane-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admission Modals -->
+    <div id="applyModal" class="modal-drawer-overlay">
+        <div class="modal-drawer">
+            <div class="drawer-header">
+                <div class="drawer-title">Application Form</div>
+                <button class="drawer-close" onclick="closeModal('applyModal')"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="drawer-body">
+                <div id="apply-alert" class="alert" style="display:none; margin-bottom: 20px;"></div>
+                <form id="apply-form" enctype="multipart/form-data">
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label style="font-size:14px; font-weight:600; margin-bottom:8px; display:block;">First Name</label>
+                        <input type="text" id="apply_fname" class="form-control" name="first_name" style="width:100%; padding:12px; border:1px solid rgba(0,0,0,0.1); border-radius:8px;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label style="font-size:14px; font-weight:600; margin-bottom:8px; display:block;">Last Name</label>
+                        <input type="text" id="apply_lname" class="form-control" name="last_name" style="width:100%; padding:12px; border:1px solid rgba(0,0,0,0.1); border-radius:8px;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label style="font-size:14px; font-weight:600; margin-bottom:8px; display:block;">Email Address</label>
+                        <input type="email" id="apply_email" class="form-control" name="email" style="width:100%; padding:12px; border:1px solid rgba(0,0,0,0.1); border-radius:8px;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label style="font-size:14px; font-weight:600; margin-bottom:8px; display:block;">Phone Number</label>
+                        <input type="text" id="apply_phone" class="form-control" name="phone" style="width:100%; padding:12px; border:1px solid rgba(0,0,0,0.1); border-radius:8px;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:24px;">
+                        <label style="font-size:14px; font-weight:600; margin-bottom:8px; display:block;">Target Course / Program</label>
+                        <select id="apply_course" name="course" style="width:100%; padding:12px; border:1px solid rgba(0,0,0,0.1); border-radius:8px; font-family:'Inter';" required>
+                            <option value="">Select a Course</option>
+                            <option value="BS Computer Science">BS Computer Science</option>
+                            <option value="BS Criminology">BS Criminology</option>
+                            <option value="BS Education">Bachelor of Education</option>
+                            <option value="BS Accountancy">BS Accountancy (BSA)</option>
+                            <option value="BS Nursing">BS Nursing</option>
+                            <option value="BS Hospitality Management">BS Hospitality Management (HM)</option>
+                        </select>
+                    </div>
+                    
+                    <h4 style="font-family:'Outfit'; font-size:18px; margin-bottom:12px; border-top:1px solid rgba(0,0,0,0.05); padding-top:24px;">Upload Requirements</h4>
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Please upload scanned copies or clear photos of your available requirements. You can submit others later.</p>
+                    
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label style="font-size:14px; font-weight:600; margin-bottom:8px; display:block;">Report Card / Latest Grades</label>
+                        <input type="file" id="apply_grades" name="grades" accept="image/*,.pdf" style="width:100%; padding:10px; border:1px dashed rgba(0,0,0,0.2); border-radius:8px;">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom:32px;">
+                        <label style="font-size:14px; font-weight:600; margin-bottom:8px; display:block;">Form 137 / Official Transcript</label>
+                        <input type="file" id="apply_form137" name="form137" accept="image/*,.pdf" style="width:100%; padding:10px; border:1px dashed rgba(0,0,0,0.2); border-radius:8px;">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; border-radius:12px; border:none; font-weight:700;">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="reqModal" class="modal-drawer-overlay">
+        <div class="modal-drawer" style="width:600px;">
+            <div class="drawer-header">
+                <div class="drawer-title">Admission Requirements</div>
+                <button class="drawer-close" onclick="closeModal('reqModal')"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="drawer-body">
+                <p style="font-size:15px; line-height:1.6; color:var(--text-muted); margin-bottom:32px;">To ensure a smooth enrollment process, please prepare the following original and photocopied documents.</p>
+                
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div style="padding:24px; border:1px solid rgba(0,0,0,0.05); border-radius:16px; background:#f8fafc; display:flex; gap:16px;">
+                        <i class="ph-fill ph-check-circle" style="color:var(--success); font-size:24px; flex-shrink:0;"></i>
+                        <div>
+                            <h4 style="font-size:16px; font-weight:700; color:var(--primary); margin-bottom:4px;">Original Form 138 (Report Card)</h4>
+                            <p style="font-size:14px; color:var(--text-muted);">Must be signed by the high school principal. For transferees, submit your latest True Copy of Grades.</p>
+                        </div>
+                    </div>
+                    <div style="padding:24px; border:1px solid rgba(0,0,0,0.05); border-radius:16px; background:#f8fafc; display:flex; gap:16px;">
+                        <i class="ph-fill ph-check-circle" style="color:var(--success); font-size:24px; flex-shrink:0;"></i>
+                        <div>
+                            <h4 style="font-size:16px; font-weight:700; color:var(--primary); margin-bottom:4px;">Original Form 137 / Official Transcript</h4>
+                            <p style="font-size:14px; color:var(--text-muted);">Permanent student academic record. Can be processed as "To Follow" if currently unavailable.</p>
+                        </div>
+                    </div>
+                    <div style="padding:24px; border:1px solid rgba(0,0,0,0.05); border-radius:16px; background:#f8fafc; display:flex; gap:16px;">
+                        <i class="ph-fill ph-check-circle" style="color:var(--success); font-size:24px; flex-shrink:0;"></i>
+                        <div>
+                            <h4 style="font-size:16px; font-weight:700; color:var(--primary); margin-bottom:4px;">Certificate of Good Moral Character</h4>
+                            <p style="font-size:14px; color:var(--text-muted);">Issued by the last school attended, dated within the last 6 months.</p>
+                        </div>
+                    </div>
+                    <div style="padding:24px; border:1px solid rgba(0,0,0,0.05); border-radius:16px; background:#f8fafc; display:flex; gap:16px;">
+                        <i class="ph-fill ph-check-circle" style="color:var(--success); font-size:24px; flex-shrink:0;"></i>
+                        <div>
+                            <h4 style="font-size:16px; font-weight:700; color:var(--primary); margin-bottom:4px;">PSA Birth Certificate</h4>
+                            <p style="font-size:14px; color:var(--text-muted);">1 Original and 2 Clear Photocopies.</p>
+                        </div>
+                    </div>
+                    <div style="padding:24px; border:1px solid rgba(0,0,0,0.05); border-radius:16px; background:#f8fafc; display:flex; gap:16px;">
+                        <i class="ph-fill ph-check-circle" style="color:var(--success); font-size:24px; flex-shrink:0;"></i>
+                        <div>
+                            <h4 style="font-size:16px; font-weight:700; color:var(--primary); margin-bottom:4px;">Recent 2x2 ID Pictures</h4>
+                            <p style="font-size:14px; color:var(--text-muted);">3 pieces, white background with name tag.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="drawer-footer" style="background:#f8fafc; border-top:1px solid rgba(0,0,0,0.05); padding:24px; text-align:right;">
+                <button onclick="closeModal('reqModal'); openModal('applyModal');" class="btn" style="background:var(--accent); color:#000; padding:12px 24px; font-weight:700; border-radius:12px; border:none; cursor:pointer;">Proceed to Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background:#051221; color:rgba(255,255,255,0.6); padding:24px 48px; font-size:14px; border-top:1px solid rgba(255,255,255,0.1);">
+        <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <img src="images/logo.jpg" alt="Logo" style="width:28px; height:28px; border-radius:50%;">
+                <div style="font-family:'Outfit'; font-size:18px; font-weight:800; color:var(--white);">CHCC<span style="color:var(--accent);">Portal</span></div>
+            </div>
+            <div>
+                &copy; 2026 Concepcion Holy Cross College. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Scroll Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await checkAuth();
+            if (user) {
+                window.location.href = user.role === 'admin' ? '/admin/dashboard.html' : '/student/dashboard.html';
+            }
+        });
+
+        function showAlert(msg, type = 'error') {
+            const alert = document.getElementById('form-alert');
+            alert.textContent = msg;
+            alert.className = `alert alert-${type === 'error' ? 'error' : 'success'}`;
+            alert.style.display = 'block';
+            setTimeout(() => { alert.style.display = 'none'; }, 5000);
+        }
+
+        function setRole(role, event) {
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+            const target = event.currentTarget || event.target;
+            target.classList.add('active');
+            
+            document.getElementById('loginType').value = role;
+            const label = document.getElementById('user-label');
+            const icon = document.getElementById('user-icon');
+            const input = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+
+            // Clear the typed values when switching tabs
+            input.value = '';
+            passwordInput.value = '';
+
+            if (role === 'admin') {
+                label.textContent = "Admin Username";
+                icon.className = "ph-bold ph-shield-check";
+                input.placeholder = "e.g. admin";
+            } else {
+                label.textContent = "Student Username";
+                icon.className = "ph-bold ph-user";
+                input.placeholder = "e.g. STU-2024-0042";
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginType = document.getElementById('loginType').value;
+            const btn = e.target.querySelector('button');
+            const origText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="ph-bold ph-circle-notch ph-spin"></i> Signing in...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetchAPI('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password, loginType })
+                });
+                
+                window.location.href = res.user.role === 'admin' ? '/admin/dashboard.html' : '/student/dashboard.html';
+            } catch (err) {
+                showAlert(err.message, 'error');
+                btn.innerHTML = origText;
+                btn.disabled = false;
+            }
+        });
+
+        // Modals logic
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Application submit logic
+        document.getElementById('apply-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button');
+            const origText = btn.innerHTML;
+            btn.innerHTML = '<i class="ph-bold ph-circle-notch ph-spin"></i> Submitting...';
+            btn.disabled = true;
+            
+            const alertBox = document.getElementById('apply-alert');
+
+            try {
+                const formData = new FormData(form);
+                const res = await fetch('http://localhost:3000/api/admissions/apply', {
+                    method: 'POST',
+                    body: formData // native fetch handles multipart/form-data boundary automatically
+                });
+                
+                if(!res.ok) throw new Error('Failed to submit application.');
+
+                alertBox.textContent = 'Application submitted successfully! Our team will contact you soon.';
+                alertBox.className = 'alert alert-success';
+                alertBox.style.display = 'block';
+                form.reset();
+                setTimeout(() => closeModal('applyModal'), 3000);
+            } catch(err) {
+                alertBox.textContent = err.message;
+                alertBox.className = 'alert alert-error';
+                alertBox.style.display = 'block';
+            } finally {
+                btn.innerHTML = origText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

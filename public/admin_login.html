@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Student Portal System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body style="background: #051221; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif;">
+    <div class="auth-container" style="width: 100%; max-width: 440px; padding: 20px;">
+        <div class="auth-card premium-card accent-gold" style="padding: 48px; border-radius: 32px; background: rgba(10, 37, 64, 0.4); backdrop-filter: blur(40px) saturate(200%);">
+            <div class="text-center mb-5 login-logo" style="text-align: center; margin-bottom: 40px;">
+                <div class="logo-orb" style="width: 64px; height: 64px; background: rgba(226, 183, 20, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; color: var(--accent);">
+                    <i class="ph-bold ph-shield-star"></i>
+                </div>
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; color: white; letter-spacing: 1px;">ADMIN PORTAL</h2>
+                <p style="color: rgba(255,255,255,0.6); font-weight: 500; margin-top: 4px;">Administrative Infrastructure</p>
+            </div>
+            
+            <div id="form-alert" class="alert"></div>
+
+            <form id="login-form">
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="username" style="font-weight: 700; color: rgba(255,255,255,0.9); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: block;">Authorized ID</label>
+                    <div class="input-wrapper" style="position: relative;">
+                        <i class="ph-bold ph-user-gear" style="position: absolute; left: 16px; top: 14px; font-size: 20px; color: var(--accent);"></i>
+                        <input type="text" id="username" class="form-control" required placeholder="e.g. admin_master" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: white; padding-left: 48px; height: 50px;">
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 32px;">
+                    <label for="password" style="font-weight: 700; color: rgba(255,255,255,0.9); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: block;">Security Credential</label>
+                    <div class="input-wrapper" style="position: relative;">
+                        <i class="ph-bold ph-key-return" style="position: absolute; left: 16px; top: 14px; font-size: 20px; color: var(--accent);"></i>
+                        <input type="password" id="password" class="form-control" required placeholder="••••••••" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: white; padding-left: 48px; height: 50px;">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block" style="padding:16px; font-size:16px; font-weight:800; border-radius: 14px; background: var(--accent); color: #000; border: none; box-shadow: 0 10px 25px rgba(226, 183, 20, 0.2);">
+                    Unlock Terminal <i class="ph-bold ph-lock-key-open"></i>
+                </button>
+            </form>
+            
+            <div class="text-center mt-4" style="font-size: 0.9rem; text-align: center; margin-top: 32px;">
+                <p><a href="/index.html" style="color: rgba(255,255,255,0.5); text-decoration: none; font-weight: 600;">&larr; Return to Student Gateway</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await checkAuth();
+            if (user && user.role === 'admin') {
+                window.location.href = '/admin/dashboard.html';
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const btn = e.target.querySelector('button');
+            const origText = btn.textContent;
+            btn.textContent = 'Authenticating...';
+            btn.disabled = true;
+
+            try {
+                await fetchAPI('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password, loginType: 'admin' })
+                });
+                
+                window.location.href = '/admin/dashboard.html';
+            } catch (err) {
+                showAlert(err.message, 'error');
+                btn.textContent = origText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
