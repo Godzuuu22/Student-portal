@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS attendance (
 -- Username: admin, Password: password123
 INSERT INTO users (username, password_hash, role) 
 VALUES ('admin', '$2b$10$YvnjDQ5sMQnnIR/QfNxAQOy9HxqI6432jw0ey8gIszOZXioBW2HX.', 'admin') 
-ON DUPLICATE KEY UPDATE username='admin';
+ON DUPLICATE KEY UPDATE password_hash=VALUES(password_hash), role=VALUES(role);
 
 -- Announcements table
 CREATE TABLE IF NOT EXISTS announcements (
