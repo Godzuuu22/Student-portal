@@ -332,9 +332,24 @@
       }
       
       @media(max-width: 900px) {
-        .split-hero { flex-direction: column; text-align: center; }
+        .split-hero { flex-direction: column; text-align: center; padding: 40px 20px; }
         .hero-subheadline { margin: 0 auto; }
-        .hero-headline { font-size: 48px; }
+        .hero-headline { font-size: 38px !important; line-height: 1.2; }
+        .landing-nav { padding: 16px 20px; }
+        .nav-links { 
+          display: none; 
+          position: absolute; 
+          top: 100%; 
+          left: 0; 
+          width: 100%; 
+          background: rgba(10,37,64,0.95); 
+          flex-direction: column; 
+          padding: 20px; 
+          gap: 16px;
+          backdrop-filter: blur(10px);
+        }
+        .nav-links.active { display: flex; }
+        .mobile-nav-toggle { display: block !important; }
       }
     </style>
 </head>
@@ -353,6 +368,9 @@
             <a href="#admissions">Admissions</a>
             <a href="#contact">Contact</a>
         </div>
+        <button class="mobile-nav-toggle" style="display:none; background:none; border:none; color:white; font-size:28px; cursor:pointer;" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+            <i class="ph-bold ph-list"></i>
+        </button>
     </nav>
 
     <div id="hero" class="hero-section">

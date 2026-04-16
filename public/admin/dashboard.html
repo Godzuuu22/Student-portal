@@ -46,9 +46,15 @@
             </div>
         </aside>
         
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        
         <main class="main-content">
             <header class="main-header">
-                <div>
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <button id="mobile-toggle" style="display:none; background:none; border:none; font-size:24px; color:var(--primary); cursor:pointer;">
+                        <i class="ph-bold ph-list"></i>
+                    </button>
+                    <div>
                     <h1 id="page-title">Admin Dashboard</h1>
                     <div id="welcome-sub" class="subtitle-text">System performance and management portal</div>
                 </div>
@@ -612,6 +618,37 @@
         }
 
         function showAlert(msg, type = 'error', id = 'modal-alert') { const el = document.getElementById(id); el.textContent = msg; el.className = `alert alert-${type === 'error' ? 'error' : 'success'}`; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 5000); }
+
+        // --- MOBILE SIDEBAR TOGGLE LOGIC ---
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('mobile-active');
+            overlay.classList.toggle('active');
+        }
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', toggleSidebar);
+        }
+        
+        if (overlay) {
+            overlay.addEventListener('click', toggleSidebar);
+        }
+
+        function checkMobile() {
+            if (window.innerWidth <= 1024) {
+                mobileToggle.style.display = 'block';
+            } else {
+                mobileToggle.style.display = 'none';
+                sidebar.classList.remove('mobile-active');
+                overlay.classList.remove('active');
+            }
+        }
+
+        window.addEventListener('resize', checkMobile);
+        checkMobile();
     </script>
 </body>
 </html>
