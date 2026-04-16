@@ -15,6 +15,16 @@ CREATE TABLE IF NOT EXISTS students (
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     dob DATE,
+    profile_pic VARCHAR(255) DEFAULT 'default-profile.png',
+    gender ENUM('Male', 'Female', 'Other'),
+    address TEXT,
+    phone VARCHAR(20),
+    religion VARCHAR(50),
+    age INT,
+    height VARCHAR(20),
+    weight VARCHAR(20),
+    birthdate DATE,
+    nationality VARCHAR(50) DEFAULT 'Filipino',
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -23,7 +33,9 @@ CREATE TABLE IF NOT EXISTS subjects (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(20) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
-    description TEXT
+    description TEXT,
+    instructor VARCHAR(100),
+    color_theme VARCHAR(20) DEFAULT 'blue'
 );
 
 -- Enrollments table
@@ -32,6 +44,7 @@ CREATE TABLE IF NOT EXISTS enrollments (
     student_id INT NOT NULL,
     subject_id INT NOT NULL,
     semester VARCHAR(20) NOT NULL,
+    progress INT DEFAULT 0,
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
     UNIQUE KEY student_subject (student_id, subject_id)
