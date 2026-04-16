@@ -4,14 +4,16 @@ require('dotenv').config();
 
 async function migrate() {
     try {
-        const connection = await mysql.createConnection({
+        const connectionConfig = process.env.MYSQL_URL || {
             host: process.env.DB_HOST || 'localhost',
             port: process.env.DB_PORT || 3307,
             user: process.env.DB_USER || 'root',
             password: process.env.DB_PASS || '',
             database: process.env.DB_NAME || 'student_portal',
             multipleStatements: true
-        });
+        };
+        
+        const connection = await mysql.createConnection(connectionConfig);
         
         const sql = fs.readFileSync('database.sql', 'utf8');
         await connection.query(sql);
