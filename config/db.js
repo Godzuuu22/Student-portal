@@ -10,6 +10,24 @@ const connectionConfig = process.env.MYSQL_URL || {
     port: process.env.DB_PORT || 3306
 };
 
+console.log('--- Database Config Details ---');
+console.log('Method:', process.env.MYSQL_URL ? 'MYSQL_URL (URI)' : 'Individual Parameters');
+console.log('Database:', connectionConfig.database || 'Extracted from URI');
+
 const pool = mysql.createPool(connectionConfig);
+
+// Quick test connection on boot
+(async () => {
+    try {
+        const connection = await pool.getConnection();
+        console.log('✅ MySQL Database connected successfully');
+        connection.release();
+    } catch (err) {
+        console.error('❌ Database Connection Failed:');
+        console.error('Code:', err.code);
+        console.error('Message:', err.message);
+        console.error('Check your Railway environment variables (MYSQL_URL).');
+    }
+})();
 
 module.exports = pool;
